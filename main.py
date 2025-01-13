@@ -2,8 +2,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-from perceptron import Perceptron
 from plot import plot_decision_regions
+from perceptron import Perceptron
+from adalineGD import AdalineGD
+from adalineSGD import AdalineSGD
 
 def main():
     url = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
@@ -48,7 +50,47 @@ def main():
         plt.legend(loc='upper left')
         plt.tight_layout()
         plt.show()
+    
+    #AdalineGD
+    etas_adaline = [0.0001, 0.1]
+    for eta in etas_adaline:
+        ada_gd = AdalineGD(eta=eta, n_iter=10)
+        ada_gd.fit(x, y)
 
+        plt.figure()
+        plt.plot(range(1, len(ada_gd.errors) + 1), ada_gd.errors, marker='o')
+        plt.xlabel('Epoka')
+        plt.ylabel('Liczba błędów')
+        plt.title(f'AdalineGD: błędne klasyfikacje (eta={eta})')
+        plt.show()
+
+        plt.figure()
+        plot_decision_regions(x, y, classifier=ada_gd)
+        plt.title(f'Granica decyzyjna - AdalineGD (eta={eta})')
+        plt.xlabel('Długość działki [cm]')
+        plt.ylabel('Długość płatka [cm]')
+        plt.legend(loc='upper left')
+        plt.show()
+
+    #AdalineSGD
+    eta_sgd = 0.01
+    ada_sgd = AdalineSGD(eta=eta_sgd, n_iter=15, random_state=1)
+    ada_sgd.fit(x, y)
+
+    plt.figure()
+    plt.plot(range(1, len(ada_sgd.errors) + 1), ada_sgd.errors, marker='o')
+    plt.xlabel('Epoka')
+    plt.ylabel('Liczba błędów')
+    plt.title(f'AdalineSGD: błędne klasyfikacje (eta={eta_sgd})')
+    plt.show()
+
+    plt.figure()
+    plot_decision_regions(x, y, classifier=ada_sgd)
+    plt.title(f'Granica decyzyjna - AdalineSGD (eta={eta_sgd})')
+    plt.xlabel('Długość działki [cm]')
+    plt.ylabel('Długość płatka [cm]')
+    plt.legend(loc='upper left')
+    plt.show()
 
 if __name__ == "__main__":
     main()
